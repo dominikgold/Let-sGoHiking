@@ -1,5 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'kotlin-android'
+
+ext {
+    anko_version = "0.9"
+    support_libs_version = "25.1.0"
+    rxjava_version = "2.0.3"
+    rxandroid_version = "2.0.1"
+    timber_version = "4.1.2"
+    dagger_version = "2.8"
+}
 
 android {
     compileSdkVersion 25
@@ -12,23 +22,56 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    lintOptions {
+        quiet true
+        abortOnError true
+        warningsAsErrors true
+        textReport true
+        textOutput 'stdout'
+        xmlReport true
+        htmlReport true
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.0.1'
+
+    //support library stuff
+    compile "com.android.support:support-fragment:$support_libs_version"
+    compile "com.android.support:design:$support_libs_version"
+    compile "com.android.support:appcompat-v7:$support_libs_version"
+    compile "com.android.support:recyclerview-v7:$support_libs_version"
+
+    compile "org.jetbrains.anko:anko-sdk19:$anko_version"
+    compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+    compile "org.jetbrains.anko:anko-support-v4:$anko_version"
+    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
+    compile "org.jetbrains.anko:anko-design:$anko_version"
+
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    compile "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+
+    compile "com.google.dagger:dagger:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+
+    compile "com.jakewharton.timber:timber:$timber_version"
 }
+
 repositories {
     mavenCentral()
 }

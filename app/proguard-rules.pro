@@ -15,3 +15,22 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+# Target
+-target 1.7
+
+# Optional
+-dontobfuscate
+
+# General settings
+#-repackageclasses
+-dontskipnonpubliclibraryclassmembers
+-allowaccessmodification
+-mergeinterfacesaggressively
+
+# Optimization options
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
+
+# AppCompat
+-keep public class android.support.v7.widget.** { *; }
+-keep public class android.support.v7.internal.widget.** { *; }
+-keep public class android.support.v7.internal.view.menu.** { *; }
