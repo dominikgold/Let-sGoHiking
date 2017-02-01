@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_map.*
-import kotlinx.android.synthetic.main.toolbar_layout.*
 
 abstract class BaseActivity : AppCompatActivity() {
 

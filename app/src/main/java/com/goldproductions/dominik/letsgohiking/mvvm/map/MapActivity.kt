@@ -18,7 +18,7 @@ class MapActivity : BaseActivity() {
         initToolbar(R.string.activity_map_toolbar_title)
 
         map_view.onCreate(savedInstanceState)
-        map_view.getMapAsync { googleMap ->
+        map_view.getMapAsync { googleMap: GoogleMap ->
             this.googleMap = googleMap
         }
     }

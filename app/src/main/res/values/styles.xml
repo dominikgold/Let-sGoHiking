@@ -9,7 +9,7 @@
     </style>
     
     <style name="AppThemeToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
-
+        <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
 </resources>
