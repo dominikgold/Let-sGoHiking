@@ -3,8 +3,8 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'kotlin-android'
 
 ext {
-    anko_version = "0.9"
     support_libs_version = "25.1.0"
+    play_services_version = "10.0.1"
     rxjava_version = "2.0.3"
     rxandroid_version = "2.0.1"
     timber_version = "4.1.2"
@@ -43,6 +43,10 @@ android {
         xmlReport true
         htmlReport true
     }
+
+    applicationVariants.all { variant ->
+        variant.buildConfigField "String", "GOOGLE_MAPS_KEY", "\"AIzaSyAZKDSO9gcGneEaDdwIr24xVS66ynBgsRQ\""
+    }
 }
 
 dependencies {
@@ -55,11 +59,8 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support_libs_version"
     compile "com.android.support:recyclerview-v7:$support_libs_version"
 
-    compile "org.jetbrains.anko:anko-sdk19:$anko_version"
-    compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
-    compile "org.jetbrains.anko:anko-support-v4:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
-    compile "org.jetbrains.anko:anko-design:$anko_version"
+    //play services
+    compile "com.google.android.gms:play-services-maps:$play_services_version"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 

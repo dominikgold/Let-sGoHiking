@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_my_routes"
+        android:title="@string/my_routes"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_licences"
+        android:title="@string/menu_licences"
+        app:showAsAction="never" />
+
+</menu>

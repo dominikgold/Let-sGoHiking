@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Let\'s Go Hiking</string>
+    <string name="activity_map_toolbar_title">Let\'s Go Hiking</string>
+    <string name="my_routes">My Routes</string>
+    <string name="menu_licences">Licences</string>
 </resources>
