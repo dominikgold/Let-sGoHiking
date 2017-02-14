@@ -12,7 +12,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun initToolbar(@StringRes titleId: Int) {
-        toolbar.setTitle(titleId)
+        toolbar?.setTitle(titleId)
     }
 
 }
