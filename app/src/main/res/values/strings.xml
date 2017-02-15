@@ -3,4 +3,5 @@
     <string name="activity_map_toolbar_title">Let\'s Go Hiking</string>
     <string name="my_routes">My Routes</string>
     <string name="menu_licences">Licences</string>
+    <string name="menu_start">Start</string>
 </resources>
