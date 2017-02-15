@@ -15,13 +15,15 @@ class RouteRecorder(private val locationManager: LocationManager) {
     private val DISTANCE_BETWEEN_UPDATES = 10f
 
     var provider: String
-    var routeData: List<GPSPoint>? = null
+
+    var locationData: MutableList<GPSPoint>? = null
+    var currentDistance: Float = 0f
 
     init {
         provider = LocationManager.NETWORK_PROVIDER
     }
 
-    fun getInitialLocation(): Observable<GPSPoint?> {
+    fun getCurrentLocation(): Observable<GPSPoint> {
         return Observable.create { subscriber ->
             locationManager.requestSingleUpdate(provider, object: LocationListener {
                 override fun onProviderDisabled(provider: String?) {
@@ -37,8 +39,7 @@ class RouteRecorder(private val locationManager: LocationManager) {
                 }
 
                 override fun onLocationChanged(location: Location?) {
-                    subscriber.onNext(GPSPoint(location?.longitude!!, location?.latitude!!))
-                    subscriber.onComplete()
+                    subscriber.onNext(GPSPoint(location?.latitude!!, location?.longitude!!))
                 }
 
             }, null)
@@ -46,6 +47,7 @@ class RouteRecorder(private val locationManager: LocationManager) {
     }
 
     fun getRecordingObservable(): Observable<List<GPSPoint>> {
+        locationData = mutableListOf()
         return Observable.create { subscriber ->
             locationManager.requestLocationUpdates(provider, TIME_BETWEEN_UPDATES, DISTANCE_BETWEEN_UPDATES,
                     object : LocationListener {
@@ -54,7 +56,9 @@ class RouteRecorder(private val locationManager: LocationManager) {
                         val immutableList: List<GPSPoint> = listOfPoints
 
                         override fun onLocationChanged(location: Location?) {
-                            listOfPoints.add(GPSPoint(location?.longitude!!, location?.latitude!!))
+                            val point = GPSPoint(location?.latitude!!, location?.longitude!!)
+                            locationData?.add(point)
+                            listOfPoints.add(point)
                             if (immutableList.size == 5) {
                                 subscriber.onNext(immutableList)
                                 listOfPoints.clear()
@@ -74,25 +78,6 @@ class RouteRecorder(private val locationManager: LocationManager) {
                         }
                     })
         }
-    }
-
-    class UpdateListener(): LocationListener {
-        override fun onLocationChanged(location: Location?) {
-
-        }
-
-        override fun onProviderDisabled(provider: String?) {
-
-        }
-
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-
-        }
-
-        override fun onProviderEnabled(provider: String?) {
-
-        }
-
     }
 
 }

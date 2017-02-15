@@ -9,6 +9,5 @@
     android:background="@color/moss_green"
     android:elevation="@dimen/toolbar_elevation"
     android:theme="@style/AppThemeToolbar"
-    android:titleTextColor="@android:color/white"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    tools:ignore="UnusedAttribute" />
+    tools:ignore="UnusedAttribute"/>

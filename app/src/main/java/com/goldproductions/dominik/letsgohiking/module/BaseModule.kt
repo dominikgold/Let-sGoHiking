@@ -2,9 +2,13 @@ package com.goldproductions.dominik.letsgohiking.module
 
 import android.content.Context
 import android.location.LocationManager
+import com.goldproductions.dominik.letsgohiking.service.FirebaseRESTClient
+import com.goldproductions.dominik.letsgohiking.service.FirebaseRESTService
 import com.goldproductions.dominik.letsgohiking.service.RouteRecorder
 import dagger.Module
 import dagger.Provides
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -24,6 +28,21 @@ class BaseModule(val applicationContext: Context) {
     @Provides
     fun provideRouteRecorder(locationManager: LocationManager): RouteRecorder {
         return RouteRecorder(locationManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRESTClient(): Retrofit {
+        return Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("https://lets-go-hiking.firebaseio.com/")
+                .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRESTService(retrofit: Retrofit): FirebaseRESTService {
+        return FirebaseRESTService(retrofit.create(FirebaseRESTClient::class.java))
     }
 
 }

@@ -1,3 +1,3 @@
 package com.goldproductions.dominik.letsgohiking.model
 
-class GPSPoint(val longitude: Double, val latitude: Double)
+class GPSPoint(val latitude: Double, val longitude: Double)
