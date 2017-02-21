@@ -48,6 +48,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.buildConfigField "String", "GOOGLE_MAPS_KEY", "\"AIzaSyAZKDSO9gcGneEaDdwIr24xVS66ynBgsRQ\""
+        variant.buildConfigField "String", "GOOGLE_ROADS_KEY", "\"AIzaSyBx9QNbnqpCRI7-VIPp91VeQyvTCcEvm6M\""
     }
 }
 
@@ -67,7 +68,6 @@ dependencies {
 
     //play services
     compile "com.google.android.gms:play-services-maps:$play_services_version"
-    compile "com.google.firebase:firebase-database:$play_services_version"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
@@ -79,11 +79,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
-    compile "com.jakewharton.timber:timber:$timber_version"
-
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.google.code.gson:gson:$gson_version"
-    compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
 }
