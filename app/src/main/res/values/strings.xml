@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Let\'s Go Hiking</string>
+    <string name="activity_map_toolbar_title">Let\'s Go Hiking</string>
+    <string name="my_routes">My Routes</string>
+    <string name="menu_licences">Licences</string>
+    <string name="menu_start">Start</string>
+    <string name="route_list_not_loaded">There was an error loading the list of routes.</string>
+    <string name="route_list_try_again">Try again</string>
+    <string name="menu_save">Save</string>
+    <string name="save_route_dialog_title">Save route</string>
+    <string name="save_route_dialog_enter_title">Enter title</string>
+    <string name="save_route_dialog_save_button">Save</string>
+    <string name="save_route_dialog_cancel_button">Cancel</string>
+    <string name="save_route_success">Your route has been saved successfully.</string>
+    <string name="save_route_error">There was an error while trying to save your route. Please try again.</string>
+    <string name="saving_route">Saving route</string>
+    <string name="please_wait">Please wait…</string>
 </resources>
