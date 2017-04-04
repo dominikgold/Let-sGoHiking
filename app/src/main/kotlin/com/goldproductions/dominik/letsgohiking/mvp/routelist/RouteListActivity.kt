@@ -10,15 +10,16 @@ import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.goldproductions.dominik.letsgohiking.R
+import com.goldproductions.dominik.letsgohiking.model.Route
 import com.goldproductions.dominik.letsgohiking.mvp.base.BaseActivity
+import com.goldproductions.dominik.letsgohiking.mvp.routedetail.RouteDetailActivity
 import kotlinx.android.synthetic.main.activity_route_list.*
 
 class RouteListActivity : BaseActivity<RouteListView, RouteListPresenter>(), RouteListView {
 
     companion object {
-        fun launch(context: Context) {
-            val intent: Intent = Intent(context, RouteListActivity::class.java)
-            context.startActivity(intent)
+        fun getIntent(context: Context): Intent {
+            return Intent(context, RouteListActivity::class.java)
         }
     }
 
@@ -36,7 +37,7 @@ class RouteListActivity : BaseActivity<RouteListView, RouteListPresenter>(), Rou
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_route_list)
-        initToolbar(R.string.my_routes)
+        initToolbar(titleId = R.string.my_routes)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -61,7 +62,7 @@ class RouteListActivity : BaseActivity<RouteListView, RouteListPresenter>(), Rou
         Snackbar.make(recycler_view, R.string.route_list_not_loaded, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.route_list_try_again, {
                     getPresenter()?.loadRouteList()
-                })
+                }).show()
     }
 
     override fun showRouteList() {
@@ -72,6 +73,10 @@ class RouteListActivity : BaseActivity<RouteListView, RouteListPresenter>(), Rou
         }
         recycler_view.adapter = adapter
         adapter?.notifyDataSetChanged()
+    }
+
+    override fun openRouteDetail(route: Route) {
+        startActivity(RouteDetailActivity.getIntent(context = this, route = route))
     }
 
     override fun onResume() {

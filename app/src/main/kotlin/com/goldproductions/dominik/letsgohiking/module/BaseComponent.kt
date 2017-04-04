@@ -1,6 +1,7 @@
 package com.goldproductions.dominik.letsgohiking.module
 
 import com.goldproductions.dominik.letsgohiking.mvp.map.MapPresenter
+import com.goldproductions.dominik.letsgohiking.mvp.routedetail.RouteDetailPresenter
 import com.goldproductions.dominik.letsgohiking.mvp.routelist.RouteListPresenter
 import dagger.Component
 import javax.inject.Singleton
@@ -11,4 +12,6 @@ interface BaseComponent {
     fun inject(mapPresenter: MapPresenter)
 
     fun inject(routeListPresenter: RouteListPresenter)
+
+    fun inject(routeDetailPresenter: RouteDetailPresenter)
 }

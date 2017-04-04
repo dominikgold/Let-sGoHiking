@@ -1,4 +1,4 @@
-package com.goldproductions.dominik.letsgohiking.mvp.base
+package com.goldproductions.dominik.letsgohiking.examples
 
 import android.util.Log
 import android.widget.TextView
@@ -10,51 +10,7 @@ import io.reactivex.schedulers.Schedulers
 
 class RxJavaTest(val textView: TextView) {
 
-    val TAG = "BaseActivity"
-
-    var timeOfFirstEmission = 0L
-
-//    fun helloPlanets() {
-//        createObservable()
-//                // this allows to execute our Observable code on a separate thread intended for I/O work (e.g. a network
-//                // request) so that it doesn't block our main thread
-//                .subscribeOn(Schedulers.io())
-//                // RxAndroid hook that makes our Subscriber code execute on the Android UI thread
-//                // this is necessary when we want to make changes to the UI based on the emissions of a data flow
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({
-//                    next ->
-//                    // consume the elements
-//                    Log.d(TAG, next + " after " + (System.currentTimeMillis() - timeOfFirstEmission) + "ms")
-//                }, {
-//                    error ->
-//                    // here goes all error handling
-//                    Log.e(TAG, "encountered an error: " + error.message)
-//                }, {
-//                    // this is executed after onComplete() is called
-//                    Log.d(TAG, "observable completed its emission after "
-//                            + (System.currentTimeMillis() - timeOfFirstEmission) + "ms")
-//                })
-//    }
-//
-//    /**
-//     * creates an observable that emits 3 Strings, one per second
-//     */
-//    fun createObservable(): Observable<String> {
-//        val hello: String = "Hello "
-//        val planets: Array<String> = arrayOf("Mercury", "Venus", "Earth")
-//        timeOfFirstEmission = System.currentTimeMillis()
-//        return Observable.create<String>({
-//            subscriber ->
-//            for (i in planets.indices) {
-//                // sleeping simulates expensive network request
-//                Thread.sleep(1000)
-//                val helloPlanet: String = hello + planets[i]
-//                subscriber.onNext(helloPlanet)
-//            }
-//            subscriber.onComplete()
-//        })
-//    }
+    val TAG = "RxJavaTest"
 
     fun helloPlanets() {
         createObservable()

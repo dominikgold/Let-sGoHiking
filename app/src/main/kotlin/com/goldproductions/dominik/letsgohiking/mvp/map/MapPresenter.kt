@@ -2,8 +2,8 @@ package com.goldproductions.dominik.letsgohiking.mvp.map
 
 import com.goldproductions.dominik.letsgohiking.GoHikingApplication
 import com.goldproductions.dominik.letsgohiking.mvp.base.BasePresenter
-import com.goldproductions.dominik.letsgohiking.service.APIService
-import com.goldproductions.dominik.letsgohiking.service.RouteRecorder
+import com.goldproductions.dominik.letsgohiking.service.APIServiceIF
+import com.goldproductions.dominik.letsgohiking.service.RouteRecorderIF
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -15,17 +15,19 @@ import javax.inject.Inject
 
 class MapPresenter() : BasePresenter<MapView>() {
 
-    @Inject
-    lateinit var routeRecorder: RouteRecorder
+    init {
+        GoHikingApplication.graph.inject(this)
+    }
 
     @Inject
-    lateinit var apiService: APIService
+    lateinit var routeRecorder: RouteRecorderIF
 
-    private var routeRecordingObservable: Observable<List<LatLng>>? = null
+    @Inject
+    lateinit var apiService: APIServiceIF
+
+    private var routeRecordingObservable: Observable<LatLng>? = null
 
     private var currentLocationSingle: Single<LatLng>? = null
-
-    private var initialMarkerLocationSingle: Single<LatLng>? = null
 
     private var saveRouteCompletable: Completable? = null
 
@@ -33,18 +35,15 @@ class MapPresenter() : BasePresenter<MapView>() {
 
     var isRecording: Boolean = false
 
-    init {
-        GoHikingApplication.graph.inject(this)
-    }
-
     /**
      * this is used to get the initial location of the user on app startup to position the map camera
      */
     fun initCurrentLocationSingle() {
         if (currentLocationSingle == null) {
-            currentLocationSingle = routeRecorder.getCurrentLocation().map<LatLng>(Function { next->
-                LatLng(next.latitude, next.longitude)
-            }).cache()
+            currentLocationSingle = routeRecorder.getCurrentLocation()
+                .map<LatLng>(Function { next->
+                    LatLng(next.latitude, next.longitude)
+                }).cache()
             requestCurrentLocation()
         }
     }
@@ -59,42 +58,16 @@ class MapPresenter() : BasePresenter<MapView>() {
     }
 
     /**
-     * this is used to get the initial location of the user when he starts the route recording
-     */
-    fun initMarkerLocationSingle() {
-        if (initialMarkerLocationSingle == null) {
-            initialMarkerLocationSingle = routeRecorder.getCurrentLocation().map<LatLng>(Function { next ->
-                LatLng(next.latitude, next.longitude)
-            }).cache()
-            requestInitialMarkerLocation()
-        }
-    }
-
-    private fun requestInitialMarkerLocation() {
-        if (initialMarkerLocationSingle != null) {
-            disposables?.add(initialMarkerLocationSingle?.subscribe { next ->
-                view?.setInitialMarkerLocation(next)
-                initialMarkerLocationSingle = null
-            })
-        }
-    }
-
-    /**
-     * this is used to start recording a route and displaying it on the map
+     * this is used to start recording a route
      */
     fun initRouteRecordingObservable() {
         if (routeRecordingObservable == null) {
             isRecording = true
             view?.updateToolbarMenu()
-            routeRecordingObservable = routeRecorder.getRecordingObservable().subscribeOn(Schedulers.io())
-                    .map<List<LatLng>>(Function { next ->
-                        val newList: MutableList<LatLng> = mutableListOf()
-                        for (point in next) {
-                            newList.add(LatLng(point.latitude, point.longitude))
-                        }
-                        newList
-                    })
-                    .observeOn(AndroidSchedulers.mainThread()).cache()
+            routeRecordingObservable = routeRecorder.getRecordingObservable()
+                    .map<LatLng>(Function { next ->
+                        LatLng(next.latitude, next.longitude)
+                    }).cache()
             startRouteRecording()
         }
     }
@@ -104,17 +77,27 @@ class MapPresenter() : BasePresenter<MapView>() {
             if (locationData == null) {
                 locationData = mutableListOf()
             }
-            view?.setPolylineData(locationData)
             disposables?.add(routeRecordingObservable?.subscribe { next ->
-                locationData?.addAll(next)
-                view?.setPolylineData(next)
+                locationData?.add(next)
+                view?.setPolylineData(locationData)
+                setNewMarkerLocation()
             })
+        }
+    }
+
+    private fun setNewMarkerLocation() {
+        val newMarkerLocation = locationData?.last()
+        if (newMarkerLocation != null) {
+            view?.setMarkerLocation(newMarkerLocation)
         }
     }
 
     fun saveRoute(title: String) {
         if (saveRouteCompletable == null) {
-            saveRouteCompletable = apiService.saveRoute(locationData, title, routeRecorder.currentDistance)
+            saveRouteCompletable = apiService.saveRoute(locationData, title,
+                                        routeRecorder.getDistance())
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
             startSavingRoute()
         }
     }
@@ -126,11 +109,12 @@ class MapPresenter() : BasePresenter<MapView>() {
                 // on complete
                 view?.hideProgressDialog()
                 view?.showSaveRouteSuccess()
-                routeRecorder.currentDistance = 0f
+                routeRecorder.resetRouteRecording()
                 isRecording = false
                 locationData = null
                 view?.clearMapData()
                 view?.updateToolbarMenu()
+                routeRecordingObservable = null
                 saveRouteCompletable = null
 
             }, {
@@ -142,21 +126,26 @@ class MapPresenter() : BasePresenter<MapView>() {
         }
     }
 
+    fun initMapData() {
+        if (isRecording && locationData?.size ?: 0 > 0) {
+            view?.setPolylineData(locationData)
+            setNewMarkerLocation()
+        } else {
+            initCurrentLocationSingle()
+        }
+    }
+
     override fun restoreSubscribersIfNeeded() {
-        if (currentLocationSingle != null) {
-            requestCurrentLocation()
+        if (saveRouteCompletable != null) {
+            startSavingRoute()
         }
 
         if (routeRecordingObservable != null) {
             startRouteRecording()
         }
 
-        if (initialMarkerLocationSingle != null) {
-            requestInitialMarkerLocation()
-        }
-
-        if (saveRouteCompletable != null) {
-            startSavingRoute()
+        if (currentLocationSingle != null) {
+            requestCurrentLocation()
         }
     }
 

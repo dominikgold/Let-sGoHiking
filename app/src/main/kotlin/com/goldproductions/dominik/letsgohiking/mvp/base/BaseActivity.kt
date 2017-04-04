@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_map.*
 
 abstract class BaseActivity<V, P: BasePresenter<V>> : AppCompatActivity() {
 
-    var retainFragment: BaseRetainFragment<P>? = null
+    private var retainFragment: BaseRetainFragment<P>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,20 +41,25 @@ abstract class BaseActivity<V, P: BasePresenter<V>> : AppCompatActivity() {
         }
     }
 
-    fun initToolbar(@StringRes titleId: Int) {
+    protected fun initToolbar(@StringRes titleId: Int) {
         toolbar?.setTitle(titleId)
         setSupportActionBar(toolbar)
     }
 
-    fun getPresenter(): P? {
+    protected fun initToolbar(title: String) {
+        toolbar?.title = title
+        setSupportActionBar(toolbar)
+    }
+
+    protected fun getPresenter(): P? {
         if (retainFragment == null) {
             initRetainFragment()
         }
         return retainFragment?.presenter
     }
 
-    abstract fun getPresenterInstance(): P
+    abstract protected fun getPresenterInstance(): P
 
-    abstract fun getRetainFragmentTag(): String
+    abstract protected fun getRetainFragmentTag(): String
 
 }

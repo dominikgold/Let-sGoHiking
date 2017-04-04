@@ -4,26 +4,28 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class RouteRecorder(private val locationManager: LocationManager) {
+class RouteRecorder(private val locationManager: LocationManager) : RouteRecorderIF {
 
     // minimum time between updates in ms
-    private val TIME_BETWEEN_UPDATES = 2000L
+    private val TIME_BETWEEN_UPDATES = 4000L
     // minimum distance between updates in meters
-    private val DISTANCE_BETWEEN_UPDATES = 0f
-
-    var provider: String
+    private val DISTANCE_BETWEEN_UPDATES = 15f
 
     var currentDistance: Float = 0f
 
+    var currentListener: LocationListener? = null
+
+    val provider: String
+
     init {
-        provider = LocationManager.NETWORK_PROVIDER
+        // for now, only support GPS location services
+        provider = LocationManager.GPS_PROVIDER
     }
 
-    fun getCurrentLocation(): Single<Location> {
+    override fun getCurrentLocation(): Single<Location> {
         return Single.create { subscriber ->
             locationManager.requestSingleUpdate(provider, object: LocationListener {
                 override fun onProviderDisabled(provider: String?) {
@@ -48,41 +50,46 @@ class RouteRecorder(private val locationManager: LocationManager) {
         }
     }
 
-    fun getRecordingObservable(): Observable<List<Location>> {
+    override fun getRecordingObservable(): Observable<Location> {
         return Observable.create { subscriber ->
-            Looper.prepare()
-            locationManager.requestLocationUpdates(provider, TIME_BETWEEN_UPDATES, DISTANCE_BETWEEN_UPDATES,
-                    object : LocationListener {
+            currentListener = object : LocationListener {
 
-                        val listOfPoints: MutableList<Location> = mutableListOf()
-                        val lastKnownLocation: Location? = null
+                var lastKnownLocation: Location? = null
 
-                        override fun onLocationChanged(location: Location?) {
-                            if (location != null) {
-                                listOfPoints.add(location)
-                                if (lastKnownLocation != null) {
-                                    currentDistance += lastKnownLocation.distanceTo(location)
-                                }
-                                if (listOfPoints.size == 5) {
-                                    subscriber.onNext(listOfPoints)
-                                    listOfPoints.clear()
-                                }
-                            }
-                        }
+                override fun onLocationChanged(location: Location?) {
+                    if (location != null) {
+                        currentDistance += lastKnownLocation?.distanceTo(location) ?: 0f
+                        lastKnownLocation = location
+                        subscriber.onNext(location)
+                    }
+                }
 
-                        override fun onProviderDisabled(provider: String?) {
-                            // do nothing
-                        }
+                override fun onProviderDisabled(provider: String?) {
+                    // do nothing
+                }
 
-                        override fun onStatusChanged(provider: String?, status: Int, bundle: Bundle?) {
-                            // do nothing
-                        }
+                override fun onStatusChanged(provider: String?, status: Int, bundle: Bundle?) {
+                    // do nothing
+                }
 
-                        override fun onProviderEnabled(provider: String?) {
-                            // do nothing
-                        }
-                    })
+                override fun onProviderEnabled(provider: String?) {
+                    // do nothing
+                }
+            }
+
+            locationManager.requestLocationUpdates(provider, TIME_BETWEEN_UPDATES,
+                    DISTANCE_BETWEEN_UPDATES, currentListener)
         }
+    }
+
+    override fun getDistance(): Float {
+        return currentDistance
+    }
+
+    override fun resetRouteRecording() {
+        currentDistance = 0f
+        locationManager.removeUpdates(currentListener)
+        currentListener = null
     }
 
 }

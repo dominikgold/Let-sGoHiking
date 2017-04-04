@@ -38,13 +38,10 @@ class MapActivity : BaseActivity<MapView, MapPresenter>(), MapView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
-        initToolbar(R.string.activity_map_toolbar_title)
+        initToolbar(titleId = R.string.activity_map_toolbar_title)
 
         val mapViewState: Bundle? = savedInstanceState?.getBundle(MAP_VIEW_SAVE_STATE)
         map_view.onCreate(mapViewState)
-        map_view.getMapAsync { googleMap: GoogleMap ->
-            initGoogleMap(googleMap)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -60,16 +57,14 @@ class MapActivity : BaseActivity<MapView, MapPresenter>(), MapView {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val itemId = item?.itemId
         if (itemId == R.id.menu_my_routes) {
-            RouteListActivity.launch(this)
-            return true
-        } else if (itemId == R.id.menu_licences) {
-//            TODO
+            startActivity(RouteListActivity.getIntent(context = this))
             return true
         } else if (itemId == R.id.menu_start) {
-            getPresenter()?.initMarkerLocationSingle()
+            // start button clicked
             getPresenter()?.initRouteRecordingObservable()
             return true
         } else if (itemId == R.id.menu_save_route) {
+            // save button clicked
             launchSaveDialog()
             return true
         }
@@ -89,30 +84,32 @@ class MapActivity : BaseActivity<MapView, MapPresenter>(), MapView {
         invalidateOptionsMenu()
     }
 
-    override fun initGoogleMap(googleMap: GoogleMap) {
-        this.googleMap = googleMap
-        polyline = googleMap.addPolyline(PolylineOptions().color(ContextCompat.getColor(this, R.color.moss_green))
-                .width(8f))
-        getPresenter()?.initCurrentLocationSingle()
-    }
-
     override fun setInitialLocation(position: LatLng) {
         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(position, INITIAL_ZOOM_LEVEL))
     }
 
-    override fun setInitialMarkerLocation(position: LatLng) {
-        marker = googleMap?.addMarker(MarkerOptions().position(position))
+    override fun setMarkerLocation(position: LatLng) {
+        if (marker == null) {
+            marker = googleMap?.addMarker(MarkerOptions().position(position))
+        } else {
+            marker?.position = position
+        }
     }
 
     override fun setPolylineData(points: List<LatLng>?) {
+        if (polyline == null) {
+            polyline = googleMap?.addPolyline(PolylineOptions()
+                    .color(ContextCompat.getColor(this, R.color.moss_green))
+                    .width(8f))
+        }
         polyline?.points = points
     }
 
-    override fun setNewMarkerLocation(point: LatLng) {
-        marker?.position = point
-    }
-
+    /**
+     * clears the polyline and marker from the map view
+     */
     override fun clearMapData() {
+        googleMap?.clear()
         polyline = null
         marker = null
     }
@@ -121,24 +118,37 @@ class MapActivity : BaseActivity<MapView, MapPresenter>(), MapView {
      * called when saving a route. displays a loading spinner that blocks the ui.
      */
     override fun showProgressDialog() {
-        progressDialog = ProgressDialog.show(this, getString(R.string.saving_route), getString(R.string.please_wait))
+        if (progressDialog == null) {
+            progressDialog = ProgressDialog.show(this, getString(R.string.saving_route), getString(R.string.please_wait))
+        }
     }
 
     override fun hideProgressDialog() {
         progressDialog?.dismiss()
+        progressDialog = null
     }
 
     override fun showSaveRouteError() {
-        Snackbar.make(map_view, R.string.save_route_success, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(map_view, R.string.save_route_error, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun showSaveRouteSuccess() {
-        Snackbar.make(map_view, R.string.save_route_error, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(map_view, R.string.save_route_success, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onResume() {
         super.onResume()
         map_view.onResume()
+        if (googleMap == null) {
+            map_view.getMapAsync { googleMap: GoogleMap ->
+                initGoogleMap(googleMap)
+            }
+        }
+    }
+
+    fun initGoogleMap(googleMap: GoogleMap) {
+        this.googleMap = googleMap
+        getPresenter()?.initMapData()
     }
 
     override fun onPause() {

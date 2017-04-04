@@ -1,4 +1,4 @@
-package com.goldproductions.dominik.letsgohiking.mvp.map;
+package com.goldproductions.dominik.letsgohiking.examples;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

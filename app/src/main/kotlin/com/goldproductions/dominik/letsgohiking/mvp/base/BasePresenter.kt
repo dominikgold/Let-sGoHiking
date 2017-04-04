@@ -18,6 +18,6 @@ abstract class BasePresenter<V> {
         disposables?.dispose()
     }
 
-    abstract fun restoreSubscribersIfNeeded()
+    abstract protected fun restoreSubscribersIfNeeded()
 
 }

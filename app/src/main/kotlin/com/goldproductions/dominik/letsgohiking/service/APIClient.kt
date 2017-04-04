@@ -17,7 +17,7 @@ interface APIClient {
     @GET("routes/")
     fun getRoutes(): Call<RouteList>
 
-    @GET("routes/{id}/points")
+    @GET("routes/{id}/points/")
     fun getPointsForRoute(@Path("id") id: Int): Call<GPSPointList>
 
 }

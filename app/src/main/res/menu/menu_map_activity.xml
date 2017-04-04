@@ -8,10 +8,4 @@
         android:visible="true"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/menu_licences"
-        android:title="@string/menu_licences"
-        android:visible="true"
-        app:showAsAction="never"/>
-
 </menu>
