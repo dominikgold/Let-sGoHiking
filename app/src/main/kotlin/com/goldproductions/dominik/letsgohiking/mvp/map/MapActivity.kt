@@ -42,6 +42,11 @@ class MapActivity : BaseActivity<MapView, MapPresenter>(), MapView {
 
         val mapViewState: Bundle? = savedInstanceState?.getBundle(MAP_VIEW_SAVE_STATE)
         map_view.onCreate(mapViewState)
+
+//        val permission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+//        if (permission != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1);
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

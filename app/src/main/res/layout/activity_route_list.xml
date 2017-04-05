@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -14,20 +15,25 @@
         android:elevation="@dimen/toolbar_elevation"
         android:theme="@style/AppThemeToolbar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        tools:ignore="UnusedAttribute"/>
+        tools:ignore="UnusedAttribute"
+        />
 
     <include
         android:id="@+id/toolbar_shadow"
-        layout="@layout/toolbar_shadow"/>
+        layout="@layout/toolbar_shadow"
+        />
 
     <include
         android:id="@+id/loading_view"
-        layout="@layout/full_screen_progress_bar"/>
+        layout="@layout/full_screen_progress_bar"
+        android:visibility="gone"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"/>
+        android:layout_below="@id/toolbar"
+        />
 
 </RelativeLayout>

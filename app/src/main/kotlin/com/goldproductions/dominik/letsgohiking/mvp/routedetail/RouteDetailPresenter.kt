@@ -6,7 +6,6 @@ import com.goldproductions.dominik.letsgohiking.service.APIServiceIF
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -24,11 +23,9 @@ class RouteDetailPresenter : BasePresenter<RouteDetailView>() {
 
     fun loadLocationData(routeId: Int) {
         if (loadLocationDataSingle == null && !hasLoaded()) {
-            loadLocationDataSingle = apiService.getPointsForRoute(routeId).map<List<LatLng>> (Function{ next ->
+            loadLocationDataSingle = apiService.getPointsForRoute(routeId).map<List<LatLng>>({ next ->
                 val newList: MutableList<LatLng> = mutableListOf()
-                for (point in next) {
-                    newList.add(LatLng(point.latitude, point.longitude))
-                }
+                next.mapTo(newList) { LatLng(it.latitude, it.longitude) }
                 newList
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).cache()
             startLoadingLocationData()
