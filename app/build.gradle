@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 ext {
     support_libs_version = "25.3.1"
-    play_services_version = "10.2.1"
+    play_services_version = "11.0.2"
     rxjava_version = "2.0.3"
     rxandroid_version = "2.0.1"
     timber_version = "4.1.2"
@@ -16,7 +17,7 @@ ext {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "com.goldproductions.dominik.letsgohiking"
@@ -51,10 +52,6 @@ android {
         variant.buildConfigField "String", "GOOGLE_MAPS_KEY", "\"AIzaSyAZKDSO9gcGneEaDdwIr24xVS66ynBgsRQ\""
         variant.buildConfigField "String", "GOOGLE_ROADS_KEY", "\"AIzaSyBx9QNbnqpCRI7-VIPp91VeQyvTCcEvm6M\""
     }
-}
-
-kapt {
-    generateStubs = true
 }
 
 dependencies {

@@ -42,7 +42,7 @@ class RouteDetailPresenter : BasePresenter<RouteDetailView>() {
                 view?.hideLoadingState()
                 view?.showMapWithPoints(locationData)
                 loadLocationDataSingle = null
-            }, { error ->
+            }, { _ ->
                 view?.hideLoadingState()
                 view?.showError()
                 loadLocationDataSingle = null

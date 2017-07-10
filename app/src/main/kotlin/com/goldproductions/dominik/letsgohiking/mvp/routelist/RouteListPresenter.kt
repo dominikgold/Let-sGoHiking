@@ -55,7 +55,7 @@ class RouteListPresenter() : BasePresenter<RouteListView>() {
                 view?.hideLoadingState()
                 view?.showRouteList()
                 loadRouteListSingle = null
-            }, { error ->
+            }, {
                 view?.hideLoadingState()
                 view?.showError()
                 loadRouteListSingle = null
